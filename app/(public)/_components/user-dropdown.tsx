@@ -6,8 +6,6 @@ import {
   LogOutIcon,
 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -20,7 +18,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { authClient } from "@/lib/auth-client";
+import { useSignOut } from "@/hooks/use-sign-out";
 
 interface UserDropdownProps {
   name: string;
@@ -33,21 +31,7 @@ export default function UserDropdown({
   image,
   name,
 }: UserDropdownProps) {
-  const router = useRouter();
-
-  async function signOut() {
-    await authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          toast.success("Signed out successfully");
-          router.push("/login");
-        },
-        onError: () => {
-          toast.error("Failed to sign out");
-        },
-      },
-    });
-  }
+  const handleSignOut = useSignOut();
 
   return (
     <DropdownMenu>
@@ -105,7 +89,7 @@ export default function UserDropdown({
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem onClick={signOut}>
+        <DropdownMenuItem onClick={handleSignOut}>
           <LogOutIcon size={16} className="opacity-60" aria-hidden="true" />
           <span>Logout</span>
         </DropdownMenuItem>

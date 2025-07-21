@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import Logo from "@/public/logo.svg";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { ThemeToggle } from "@/components/sidebar/theme-toggle";
 import { authClient } from "@/lib/auth-client";
 import { buttonVariants } from "@/components/ui/button";
 
