@@ -39,6 +39,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { RichTextEditor } from "@/components/rich-text-editor/editor";
+import { Uploader } from "@/components/file-uploader/uploader";
 
 const AdminCoursesCreatePage = () => {
   const form = useForm<CourseSchemaType>({
@@ -165,7 +166,8 @@ const AdminCoursesCreatePage = () => {
                   <FormItem className="flex-1">
                     <FormLabel>Thumbnail Image</FormLabel>
                     <FormControl>
-                      <Input placeholder="Thumbnail url" {...field} />
+                      <Uploader />
+                      {/* <Input placeholder="Thumbnail url" {...field} /> */}
                     </FormControl>
                     <FormMessage />
                   </FormItem>
