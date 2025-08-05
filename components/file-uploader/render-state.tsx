@@ -1,6 +1,7 @@
 "use client";
 
-import { CloudUploadIcon, ImageIcon } from "lucide-react";
+import { CloudUploadIcon, ImageIcon, XIcon } from "lucide-react";
+import Image from "next/image";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -49,6 +50,47 @@ export const RenderErrorState = () => {
       <Button type="button" size="sm" className="mt-4">
         Retry File Selection
       </Button>
+    </div>
+  );
+};
+
+export const RenderUploadedState = ({ previewUrl }: { previewUrl: string }) => {
+  return (
+    <div>
+      <Image
+        src={previewUrl}
+        alt="uploaded file preview"
+        className="object-contain p-2"
+        fill
+      />
+
+      <Button
+        variant="destructive"
+        size="icon"
+        className={cn("absolute top-4 right-4")}
+      >
+        <XIcon className="size-4" />
+      </Button>
+    </div>
+  );
+};
+
+export const RenderUploadingState = ({
+  progress,
+  file,
+}: {
+  progress: number;
+  file: File;
+}) => {
+  return (
+    <div className="flex flex-col items-center justify-center text-center">
+      <p>{progress}</p>
+
+      <p className="text-foreground mt-2 text-sm font-medium">Uploading...</p>
+
+      <p className="text-muted-foreground mt-1 max-w-xs truncate text-xs">
+        {file.name}
+      </p>
     </div>
   );
 };
