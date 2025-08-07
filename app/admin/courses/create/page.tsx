@@ -167,7 +167,6 @@ const AdminCoursesCreatePage = () => {
                     <FormLabel>Thumbnail Image</FormLabel>
                     <FormControl>
                       <Uploader />
-                      {/* <Input placeholder="Thumbnail url" {...field} /> */}
                     </FormControl>
                     <FormMessage />
                   </FormItem>

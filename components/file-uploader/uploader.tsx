@@ -64,6 +64,58 @@ export const Uploader = () => {
     [fileState.objectUrl],
   );
 
+  const handleRemoveFile = async () => {
+    if (fileState.isDeleting || !fileState.objectUrl) return;
+
+    try {
+      setFileState((prev) => ({
+        ...prev,
+        isDeleting: true,
+      }));
+
+      const response = await fetch("/api/s3/delete", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ key: fileState.key }),
+      });
+
+      if (!response.ok) {
+        toast.error("Failed to remove file");
+        setFileState((prev) => ({
+          ...prev,
+          isDeleting: true,
+          error: true,
+        }));
+
+        return;
+      }
+
+      if (fileState.objectUrl && !fileState.objectUrl.startsWith("http")) {
+        URL.revokeObjectURL(fileState.objectUrl);
+      }
+
+      setFileState(() => ({
+        file: null,
+        isUploading: false,
+        progress: 0,
+        objectUrl: undefined,
+        error: false,
+        fileType: "image",
+        id: null,
+        isDeleting: false,
+      }));
+
+      toast.success("File removed successfully");
+    } catch {
+      toast.error("Error removing file. Please try again.");
+      setFileState((prev) => ({
+        ...prev,
+        isDeleting: false,
+        error: true,
+      }));
+    }
+  };
+
   const uploadFile = async (file: File) => {
     setFileState((prev) => ({
       ...prev,
@@ -182,7 +234,13 @@ export const Uploader = () => {
     }
 
     if (fileState.objectUrl) {
-      return <RenderUploadedState previewUrl={fileState.objectUrl} />;
+      return (
+        <RenderUploadedState
+          handleRemoveFile={handleRemoveFile}
+          isDeleting={fileState.isDeleting}
+          previewUrl={fileState.objectUrl}
+        />
+      );
     }
 
     return <RenderEmptyState isDragActive={isDragActive} />;
@@ -203,6 +261,8 @@ export const Uploader = () => {
     multiple: false,
     maxSize: 5 * 1024 * 1024, // 5MB
     onDropRejected: rejectedFiles,
+    disabled:
+      !!fileState.objectUrl || fileState.isDeleting || fileState.isUploading,
   });
 
   return (
