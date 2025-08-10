@@ -1,10 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeftIcon, PlusIcon, SparklesIcon } from "lucide-react";
+import {
+  ArrowLeftIcon,
+  LoaderIcon,
+  PlusIcon,
+  SparklesIcon,
+} from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import slugify from "slugify";
+import { useTransition } from "react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
@@ -40,8 +48,14 @@ import {
 } from "@/components/ui/select";
 import { RichTextEditor } from "@/components/rich-text-editor/editor";
 import { Uploader } from "@/components/file-uploader/uploader";
+import { tryCatch } from "@/hooks/try-catch";
+
+import { CreateCourse } from "./actions";
 
 const AdminCoursesCreatePage = () => {
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+
   const form = useForm<CourseSchemaType>({
     resolver: zodResolver(courseSchema),
     defaultValues: {
@@ -59,7 +73,23 @@ const AdminCoursesCreatePage = () => {
   });
 
   const onSubmit = (values: CourseSchemaType) => {
-    console.log(values);
+    startTransition(async () => {
+      const { data: result, error } = await tryCatch(CreateCourse(values));
+
+      if (error) {
+        toast.error("An unexpected error occurred. Please try again");
+        return;
+      }
+
+      if (result.status === "success") {
+        toast.success(result.message);
+        form.reset();
+
+        router.push("/admin/courses");
+      } else if (result.status === "error") {
+        toast.error(result.message);
+      }
+    });
   };
 
   return (
@@ -166,7 +196,7 @@ const AdminCoursesCreatePage = () => {
                   <FormItem className="flex-1">
                     <FormLabel>Thumbnail Image</FormLabel>
                     <FormControl>
-                      <Uploader />
+                      <Uploader onChange={field.onChange} value={field.value} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -291,8 +321,17 @@ const AdminCoursesCreatePage = () => {
                 )}
               />
 
-              <Button>
-                Create Course <PlusIcon className="size-4" />
+              <Button type="submit" disabled={isPending}>
+                {isPending ? (
+                  <>
+                    Creating...
+                    <LoaderIcon className="ml-1 animate-spin" />
+                  </>
+                ) : (
+                  <>
+                    Create Course <PlusIcon className="size-4" />
+                  </>
+                )}
               </Button>
             </form>
           </Form>
