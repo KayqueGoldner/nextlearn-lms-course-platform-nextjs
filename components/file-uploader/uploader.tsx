@@ -27,7 +27,12 @@ interface UploaderState {
   fileType: "image" | "video";
 }
 
-export const Uploader = () => {
+interface UploaderProps {
+  value?: string;
+  onChange?: (value: string) => void;
+}
+
+export const Uploader = ({ onChange, value }: UploaderProps) => {
   const [fileState, setFileState] = useState<UploaderState>({
     error: false,
     file: null,
@@ -36,6 +41,7 @@ export const Uploader = () => {
     progress: 0,
     isDeleting: false,
     fileType: "image",
+    key: value,
   });
 
   const onDrop = useCallback(
@@ -93,6 +99,8 @@ export const Uploader = () => {
       if (fileState.objectUrl && !fileState.objectUrl.startsWith("http")) {
         URL.revokeObjectURL(fileState.objectUrl);
       }
+
+      onChange?.("");
 
       setFileState(() => ({
         file: null,
@@ -174,6 +182,8 @@ export const Uploader = () => {
             }));
 
             toast.success("File uploaded successfully");
+
+            onChange?.(key);
 
             resolve();
           } else {
