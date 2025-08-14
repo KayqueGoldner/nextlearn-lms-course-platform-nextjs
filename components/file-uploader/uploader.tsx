@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
+import { useConstructUrl } from "@/hooks/use-construct-url";
 
 import {
   RenderEmptyState,
@@ -33,6 +34,8 @@ interface UploaderProps {
 }
 
 export const Uploader = ({ onChange, value }: UploaderProps) => {
+  const fileUrl = useConstructUrl(value || "");
+
   const [fileState, setFileState] = useState<UploaderState>({
     error: false,
     file: null,
@@ -42,6 +45,7 @@ export const Uploader = ({ onChange, value }: UploaderProps) => {
     isDeleting: false,
     fileType: "image",
     key: value,
+    objectUrl: fileUrl,
   });
 
   const onDrop = useCallback(
