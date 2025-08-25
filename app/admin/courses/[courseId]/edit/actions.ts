@@ -12,6 +12,8 @@ import {
   ChapterSchemaType,
   courseSchema,
   CourseSchemaType,
+  lessonSchema,
+  LessonSchemaType,
 } from "@/lib/zod-schemas";
 
 const aj = arcjet
@@ -216,6 +218,62 @@ export async function createChapter(
     return {
       status: "error",
       message: "Failed to create chapter",
+    };
+  }
+}
+
+export async function createLesson(
+  values: LessonSchemaType,
+): Promise<ApiResponse> {
+  await requireAdmin();
+
+  try {
+    const result = lessonSchema.safeParse(values);
+
+    if (!result.success) {
+      return {
+        status: "error",
+        message: "Invalid lesson data",
+      };
+    }
+
+    await prisma.$transaction(async (tx) => {
+      const maxPos = await tx.lesson.findFirst({
+        where: {
+          chapterId: result.data.chapterId,
+        },
+        select: {
+          position: true,
+        },
+        orderBy: {
+          position: "desc",
+        },
+      });
+
+      const position = maxPos ? maxPos.position + 1 : 1;
+
+      await tx.lesson.create({
+        data: {
+          title: result.data.name,
+          chapterId: result.data.chapterId,
+          description: result.data.description,
+          videoKey: result.data.videoKey,
+          thumbnailKey: result.data.thumbnailKey,
+          position,
+        },
+      });
+    });
+
+    revalidatePath(`/admin/courses/${result.data.courseId}/edit`);
+
+    return {
+      status: "success",
+      message: "Lesson created successfully",
+    };
+  } catch (error) {
+    return {
+      status: "error",
+      message: "Failed to create lesson",
     };
   }
 }
