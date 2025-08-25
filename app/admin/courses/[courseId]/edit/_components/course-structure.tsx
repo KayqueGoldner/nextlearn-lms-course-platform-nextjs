@@ -41,6 +41,7 @@ import { Button } from "@/components/ui/button";
 
 import { reorderChapters, reorderLessons } from "../actions";
 import { NewChapterModal } from "./new-chapter-modal";
+import { NewLessonModal } from "@/app/admin/courses/[courseId]/edit/_components/new-lesson-modal";
 
 interface CourseStructureProps {
   data: AdminGetCourse;
@@ -402,9 +403,10 @@ export const CourseStructure = ({ data }: CourseStructureProps) => {
                           </SortableContext>
 
                           <div className="p-2">
-                            <Button variant="outline" className="w-full">
-                              Create New Lesson
-                            </Button>
+                            <NewLessonModal
+                              chapterId={item.id}
+                              courseId={data.id}
+                            />
                           </div>
                         </div>
                       </CollapsibleContent>
