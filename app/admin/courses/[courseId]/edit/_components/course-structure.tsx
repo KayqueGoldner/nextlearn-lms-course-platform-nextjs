@@ -41,7 +41,8 @@ import { Button } from "@/components/ui/button";
 
 import { reorderChapters, reorderLessons } from "../actions";
 import { NewChapterModal } from "./new-chapter-modal";
-import { NewLessonModal } from "@/app/admin/courses/[courseId]/edit/_components/new-lesson-modal";
+import { NewLessonModal } from "./new-lesson-modal";
+import { DeleteLesson } from "./delete-lesson";
 
 interface CourseStructureProps {
   data: AdminGetCourse;
@@ -393,9 +394,11 @@ export const CourseStructure = ({ data }: CourseStructureProps) => {
                                       </Link>
                                     </div>
 
-                                    <Button size="icon" variant="outline">
-                                      <Trash2Icon className="size-4" />
-                                    </Button>
+                                    <DeleteLesson
+                                      chapterId={item.id}
+                                      courseId={data.id}
+                                      lessonId={lesson.id}
+                                    />
                                   </div>
                                 )}
                               </SortableItem>
