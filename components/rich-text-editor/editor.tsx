@@ -3,17 +3,23 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import TextAlign from "@tiptap/extension-text-align";
-import { ControllerRenderProps } from "react-hook-form";
-
-import { CourseSchemaType } from "@/lib/zod-schemas";
+import { ControllerRenderProps, FieldValues, FieldPath } from "react-hook-form";
 
 import { Menubar } from "./menubar";
 
-interface RichTextEditor {
-  field: ControllerRenderProps<CourseSchemaType>;
+interface RichTextEditorProps<
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+> {
+  field: ControllerRenderProps<TFieldValues, TName>;
 }
 
-export const RichTextEditor = ({ field }: RichTextEditor) => {
+export const RichTextEditor = <
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+>({
+  field,
+}: RichTextEditorProps<TFieldValues, TName>) => {
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [

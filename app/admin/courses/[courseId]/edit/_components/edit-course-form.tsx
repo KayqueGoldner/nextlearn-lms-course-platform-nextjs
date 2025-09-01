@@ -170,7 +170,11 @@ export const EditCourseForm = ({ data }: EditCourseForm) => {
             <FormItem className="flex-1">
               <FormLabel>Thumbnail Image</FormLabel>
               <FormControl>
-                <Uploader onChange={field.onChange} value={field.value} />
+                <Uploader
+                  onChange={field.onChange}
+                  value={field.value}
+                  fileTypeAccepted="image"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
