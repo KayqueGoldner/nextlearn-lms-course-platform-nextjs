@@ -49,12 +49,14 @@ import {
 import { RichTextEditor } from "@/components/rich-text-editor/editor";
 import { Uploader } from "@/components/file-uploader/uploader";
 import { tryCatch } from "@/hooks/try-catch";
+import { useConfetti } from "@/hooks/use-confetti";
 
 import { CreateCourse } from "./actions";
 
 const AdminCoursesCreatePage = () => {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+  const { triggerConfetti } = useConfetti();
 
   const form = useForm<CourseSchemaType>({
     resolver: zodResolver(courseSchema),
@@ -82,6 +84,7 @@ const AdminCoursesCreatePage = () => {
       }
 
       if (result.status === "success") {
+        triggerConfetti();
         toast.success(result.message);
         form.reset();
 
