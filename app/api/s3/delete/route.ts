@@ -3,23 +3,16 @@ import { NextResponse } from "next/server";
 
 import { env } from "@/lib/env";
 import { s3 } from "@/lib/s3-client";
-import arcjet, { detectBot, fixedWindow } from "@/lib/arcjet";
+import arcjet, { fixedWindow } from "@/lib/arcjet";
 import { requireAdmin } from "@/app/data/admin/require-admin";
 
-const aj = arcjet
-  .withRule(
-    detectBot({
-      mode: "LIVE",
-      allow: [],
-    }),
-  )
-  .withRule(
-    fixedWindow({
-      mode: "LIVE",
-      window: "1m",
-      max: 5,
-    }),
-  );
+const aj = arcjet.withRule(
+  fixedWindow({
+    mode: "LIVE",
+    window: "1m",
+    max: 5,
+  }),
+);
 
 export async function DELETE(request: Request) {
   const session = await requireAdmin();
@@ -37,8 +30,6 @@ export async function DELETE(request: Request) {
           { error: "Too many requests" },
           { status: 429 },
         );
-      } else if (reason.isBot()) {
-        return NextResponse.json({ error: "Access denied" }, { status: 403 });
       } else {
         return NextResponse.json({ error: "Request denied" }, { status: 400 });
       }
