@@ -4,7 +4,7 @@ import { request } from "@arcjet/next";
 import { revalidatePath } from "next/cache";
 
 import { requireAdmin } from "@/app/data/admin/require-admin";
-import arcjet, { detectBot, fixedWindow } from "@/lib/arcjet";
+import arcjet, { fixedWindow } from "@/lib/arcjet";
 import { prisma } from "@/lib/db";
 import { ApiResponse } from "@/lib/types";
 import {
@@ -16,20 +16,13 @@ import {
   LessonSchemaType,
 } from "@/lib/zod-schemas";
 
-const aj = arcjet
-  .withRule(
-    detectBot({
-      mode: "LIVE",
-      allow: [],
-    }),
-  )
-  .withRule(
-    fixedWindow({
-      mode: "LIVE",
-      window: "1m",
-      max: 5,
-    }),
-  );
+const aj = arcjet.withRule(
+  fixedWindow({
+    mode: "LIVE",
+    window: "1m",
+    max: 5,
+  }),
+);
 
 export async function EditCourse(
   data: CourseSchemaType,
@@ -48,8 +41,6 @@ export async function EditCourse(
 
       if (reason.isRateLimit()) {
         return { status: "error", message: "Too many requests" };
-      } else if (reason.isBot()) {
-        return { status: "error", message: "Access denied" };
       } else {
         return { status: "error", message: "Request denied" };
       }
