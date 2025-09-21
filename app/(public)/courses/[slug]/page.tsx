@@ -8,6 +8,7 @@ import {
   IconPlayerPlay,
 } from "@tabler/icons-react";
 import { CheckIcon } from "lucide-react";
+import Link from "next/link";
 
 import { env } from "@/lib/env";
 import { getCourse } from "@/app/data/course/get-course";
@@ -20,7 +21,9 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { checkIfCourseBought } from "@/app/data/user/user-is-enrolled";
+
+import { EnrollmentButton } from "./_components/enrollment-button";
 
 interface CourseSlugPageProps {
   params: Promise<{ slug: string }>;
@@ -30,6 +33,7 @@ const CourseSlugPage = async ({ params }: CourseSlugPageProps) => {
   const { slug } = await params;
 
   const course = await getCourse(slug);
+  const isEnrolled = await checkIfCourseBought(course.id);
 
   const thumbnailUrl = `https://${env.NEXT_PUBLIC_S3_BUCKET_NAME_IMAGES}.t3.storageapi.dev/${course.fileKey}`;
 
@@ -264,7 +268,11 @@ const CourseSlugPage = async ({ params }: CourseSlugPageProps) => {
                 </ul>
               </div>
 
-              <Button className="w-full">Enroll Now!</Button>
+              {isEnrolled ? (
+                <Link href="/dashboard">Watch Course</Link>
+              ) : (
+                <EnrollmentButton courseId={course.id} />
+              )}
 
               <p className="text-muted-foreground mt-3 text-center text-xs">
                 30-day money back guarantee
