@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/collapsible";
 import { Card, CardContent } from "@/components/ui/card";
 import { checkIfCourseBought } from "@/app/data/user/user-is-enrolled";
+import { buttonVariants } from "@/components/ui/button";
 
 import { EnrollmentButton } from "./_components/enrollment-button";
 
@@ -269,7 +270,12 @@ const CourseSlugPage = async ({ params }: CourseSlugPageProps) => {
               </div>
 
               {isEnrolled ? (
-                <Link href="/dashboard">Watch Course</Link>
+                <Link
+                  href="/dashboard"
+                  className={buttonVariants({ className: "w-full" })}
+                >
+                  Watch Course
+                </Link>
               ) : (
                 <EnrollmentButton courseId={course.id} />
               )}
