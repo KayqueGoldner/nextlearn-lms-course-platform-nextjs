@@ -112,6 +112,7 @@ model Course {
   status           CourseStatus @default(Draft)
   chapter          Chapter[]
   enrollment       Enrollment[]
+  stripePriceId    String       @unique
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)

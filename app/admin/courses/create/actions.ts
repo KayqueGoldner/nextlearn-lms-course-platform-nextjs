@@ -7,6 +7,7 @@ import { ApiResponse } from "@/lib/types";
 import { courseSchema, CourseSchemaType } from "@/lib/zod-schemas";
 import { requireAdmin } from "@/app/data/admin/require-admin";
 import arcjet, { fixedWindow } from "@/lib/arcjet";
+import { stripe } from "@/lib/stripe";
 
 const aj = arcjet.withRule(
   fixedWindow({
@@ -46,10 +47,20 @@ export async function CreateCourse(
       };
     }
 
+    const createdProduct = await stripe.products.create({
+      name: validation.data.title,
+      description: validation.data.description,
+      default_price_data: {
+        currency: "usd",
+        unit_amount: validation.data.price * 100,
+      },
+    });
+
     await prisma.course.create({
       data: {
         ...validation.data,
         userId: session.user.id,
+        stripePriceId: createdProduct.default_price as string,
       },
     });
 
