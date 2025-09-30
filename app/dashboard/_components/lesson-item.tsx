@@ -12,10 +12,11 @@ interface LessonItemProps {
     description: string | null;
   };
   slug: string;
+  isActive?: boolean;
 }
 
-export const LessonItem = ({ lesson, slug }: LessonItemProps) => {
-  const completed = true;
+export const LessonItem = ({ lesson, slug, isActive }: LessonItemProps) => {
+  const completed = false;
 
   return (
     <Link
@@ -26,6 +27,9 @@ export const LessonItem = ({ lesson, slug }: LessonItemProps) => {
           "h-auto w-full justify-start p-2.5 transition-all",
           completed &&
             "border-green-300 bg-green-100 text-green-800 hover:bg-green-200 dark:border-green-700 dark:bg-green-900/30 dark:text-green-200 dark:hover:bg-green-900/50",
+          isActive &&
+            !completed &&
+            "bg-primary/10 dark:bg-primary/20 border-primary/50 hover:bg-primary/20 dark:hover:bg-primary/30 text-primary",
         ),
       })}
     >
@@ -39,9 +43,17 @@ export const LessonItem = ({ lesson, slug }: LessonItemProps) => {
             <div
               className={cn(
                 "bg-background flex size-5 items-center justify-center rounded-full border-2",
+                isActive
+                  ? "border-primary bg-primary/10 dark:bg-primary/20"
+                  : "border-muted-foreground/60",
               )}
             >
-              <PlayIcon className={cn("size-2.5 fill-current")} />
+              <PlayIcon
+                className={cn(
+                  "size-2.5 fill-current",
+                  isActive ? "text-primary" : "text-muted-foreground",
+                )}
+              />
             </div>
           )}
         </div>
@@ -50,7 +62,11 @@ export const LessonItem = ({ lesson, slug }: LessonItemProps) => {
           <p
             className={cn(
               "text-xs font-medium",
-              completed && "text-green-800 dark:text-green-200",
+              completed
+                ? "text-green-800 dark:text-green-200"
+                : isActive
+                  ? "text-primary font-semibold"
+                  : "text-foreground",
             )}
           >
             {lesson.position}. {lesson.title}
@@ -59,6 +75,12 @@ export const LessonItem = ({ lesson, slug }: LessonItemProps) => {
           {completed && (
             <p className="text-[10px] font-medium text-green-700 dark:text-green-300">
               Completed
+            </p>
+          )}
+
+          {isActive && !completed && (
+            <p className="text-primary text-[10px] font-medium">
+              Curently watching
             </p>
           )}
         </div>
