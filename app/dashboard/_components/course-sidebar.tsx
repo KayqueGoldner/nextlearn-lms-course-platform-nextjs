@@ -11,6 +11,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { Button } from "@/components/ui/button";
+import { useCourseProgress } from "@/hooks/use-course-progress";
 
 import { LessonItem } from "./lesson-item";
 
@@ -21,6 +22,10 @@ interface CourseSidebarProps {
 export const CourseSidebar = ({ course }: CourseSidebarProps) => {
   const pathname = usePathname();
   const currentLessonId = pathname.split("/").pop();
+  const { completedLessons, progressPercentage, totalLessons } =
+    useCourseProgress({
+      courseData: course,
+    });
 
   return (
     <div className="flex h-full flex-col">
@@ -43,12 +48,16 @@ export const CourseSidebar = ({ course }: CourseSidebarProps) => {
         <div className="space-y-2">
           <div className="flex justify-between text-xs">
             <span className="text-muted-foreground">Progress</span>
-            <span className="font-medium">4/10 lessons</span>
+            <span className="font-medium">
+              {completedLessons}/{totalLessons} lessons
+            </span>
           </div>
 
-          <Progress value={55} className="h-1.5" />
+          <Progress value={progressPercentage} className="h-1.5" />
 
-          <p className="text-muted-foreground text-xs">55% completed</p>
+          <p className="text-muted-foreground text-xs">
+            {progressPercentage}% completed
+          </p>
         </div>
       </div>
 
@@ -82,6 +91,10 @@ export const CourseSidebar = ({ course }: CourseSidebarProps) => {
                   lesson={lesson}
                   slug={course.slug}
                   isActive={currentLessonId === lesson.id}
+                  completed={
+                    lesson.lessonProgress.find((p) => p.lessonId === lesson.id)
+                      ?.completed || false
+                  }
                 />
               ))}
             </CollapsibleContent>
