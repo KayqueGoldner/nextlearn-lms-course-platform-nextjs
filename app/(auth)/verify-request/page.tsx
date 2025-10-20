@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { Suspense, useState, useTransition } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Loader2Icon } from "lucide-react";
@@ -21,6 +21,16 @@ import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 
 const VerifyRequestPage = () => {
+  return (
+    <Suspense>
+      <VerifyRequestPageSuspense />
+    </Suspense>
+  );
+};
+
+export default VerifyRequestPage;
+
+const VerifyRequestPageSuspense = () => {
   const [otp, setOtp] = useState("");
   const [verifyOtpPending, startVerifyOtpTransition] = useTransition();
   const searchParams = useSearchParams();
@@ -99,5 +109,3 @@ const VerifyRequestPage = () => {
     </Card>
   );
 };
-
-export default VerifyRequestPage;
